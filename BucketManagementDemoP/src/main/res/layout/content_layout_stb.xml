@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="12dp"
+    android:baselineAligned="false">
+    <ListView
+        android:id="@+id/file_list_v"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:descendantFocusability="beforeDescendants"
+        android:gravity="left" >
+    </ListView>
+
+    <LinearLayout
+        android:id="@+id/operation_v"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="2dp"
+        android:layout_weight="5"
+        android:background="@color/proc_background"
+        android:orientation="vertical"
+        android:weightSum="1">
+
+        <Button
+            android:id="@+id/updownloadButton"
+            android:textColor="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:text="@string/upload"
+            android:background="@drawable/button_selector"/>
+
+        <Button
+            android:id="@+id/deleteButton"
+            android:textColor="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/delete"
+            android:background="@drawable/button_selector"/>
+
+        <Button
+            android:id="@+id/reflashButton"
+            android:textColor="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/refresh"
+            android:background="@drawable/button_selector"/>
+
+        <Button
+            android:id="@+id/saveButton"
+            android:textColor="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/save_as"
+            android:background="@drawable/button_selector"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+
+</LinearLayout>

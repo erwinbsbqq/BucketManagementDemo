@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="title_background">#ff25f3ff</color>
+    <color name="title_button">#ff0f233c</color>
+    <color name="proc_button">#b63b97ff</color>
+    <color name="proc_background">#ff66b5ff</color>
+    <color name="high_light">#ff1c90f8</color>
+    <color name="content_background">#ffffff</color>
+    <color name="highlight_button">#ff2d56f8</color>
+    <color name="loading_background">#ff111eff</color>
+    <color name="path_background">#ffbbc7cf</color>
+    <color name="progress_background">#ffffff</color>
+    <color name="progress_bar">#ff66b5ff</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+</resources>

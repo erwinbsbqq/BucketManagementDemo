@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/BucketManagementDemo.iml" filepath="$PROJECT_DIR$/BucketManagementDemo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BucketManagementDemoP/BucketManagementDemoP.iml" filepath="$PROJECT_DIR$/BucketManagementDemoP/BucketManagementDemoP.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BucketManagementDemoS/BucketManagementDemoS.iml" filepath="$PROJECT_DIR$/BucketManagementDemoS/BucketManagementDemoS.iml" />
+    </modules>
+  </component>
+</project>

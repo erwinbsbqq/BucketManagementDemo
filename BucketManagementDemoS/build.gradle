@@ -1,0 +1,42 @@
+apply plugin: 'com.android.application'
+
+def getDate() {
+    def date = new Date()
+    def formattedDate = date.format('yyyyMMddHHmm')
+    return formattedDate
+}
+
+android {
+    compileSdkVersion 22
+    buildToolsVersion "22.0.1"
+
+    defaultConfig {
+        applicationId "gowarrior.com.bucketexplorer"
+        minSdkVersion 11
+        targetSdkVersion 22
+        versionCode 1
+        versionName "2.0"
+    }
+
+    applicationVariants.all{ variant->
+        variant.outputs.each { output->
+            def outputFile  = output.outputFile
+            if(outputFile  != null && outputFile.name.endsWith('.apk')){
+                def fileName = "BucketManagementDemoS_v${defaultConfig.versionName}.apk";
+                output.outputFile = new File(outputFile.parent, fileName);
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:22.1.1'
+}
