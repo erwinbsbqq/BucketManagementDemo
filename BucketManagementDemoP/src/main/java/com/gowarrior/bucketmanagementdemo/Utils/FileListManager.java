@@ -276,27 +276,29 @@ public class FileListManager {
     }
 
 
-    public void progressUpdate() {
+    public void progressUpdate(boolean isDownload) {
         ProcNode node;
-        int size = mCloudList.getUpProcList().size();
-        for(int i=0;i<size;i++) {
-            node = mCloudList.getUpProcList().get(i);
-            node.percent = cloudTool.getUpDownLoadProgress(node.id);
-            if(-1 != node.percent) {
-                ArrayList<FileNode> fileList = mLocalList.getFileListData();
-                fileList.get(node.idx).percent = node.percent;
+        int size;
+        if(isDownload) {
+            size = mCloudList.getDownProcList().size();
+            for (int i = 0; i < size; i++) {
+                node = mCloudList.getDownProcList().get(i);
+                node.percent = cloudTool.getUpDownLoadProgress(node.id);
+                if (-1 != node.percent) {
+                    ArrayList<FileNode> fileList = mCloudList.getFileListData();
+                    fileList.get(node.idx).percent = node.percent;
+                }
+            }
+        }else{
+            size = mCloudList.getUpProcList().size();
+            for (int i = 0; i < size; i++) {
+                node = mCloudList.getUpProcList().get(i);
+                node.percent = cloudTool.getUpDownLoadProgress(node.id);
+                if (-1 != node.percent) {
+                    ArrayList<FileNode> fileList = mLocalList.getFileListData();
+                    fileList.get(node.idx).percent = node.percent;
+                }
             }
         }
-
-        size = mCloudList.getDownProcList().size();
-        for(int i=0;i<size;i++) {
-            node = mCloudList.getDownProcList().get(i);
-            node.percent = cloudTool.getUpDownLoadProgress(node.id);
-            if(-1 != node.percent) {
-                ArrayList<FileNode> fileList = mCloudList.getFileListData();
-                fileList.get(node.idx).percent = node.percent;
-            }
-        }
-
     }
 }

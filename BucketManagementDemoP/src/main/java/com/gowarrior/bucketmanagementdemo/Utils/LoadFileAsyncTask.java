@@ -48,9 +48,15 @@ public class LoadFileAsyncTask extends AsyncTask<String, Integer, FileListManage
         }
         if("sync-all".equals(params[0]) || "sync-cloud".equals(params[0])){
             mState |= PROC_SYNC;
-            mFileListManager.cloudTool.syncWithCloud();
+            boolean syncOK = false;
+
             while(isLoop) {
-                ret = mFileListManager.loadCloudFileList();
+                if(syncOK) {
+                    ret = mFileListManager.loadCloudFileList();
+                }else{
+                    ret = -1;
+                    syncOK = mFileListManager.cloudTool.syncWithCloud();
+                }
                 if(-1 != ret){
                     break;
                 }
@@ -68,7 +74,7 @@ public class LoadFileAsyncTask extends AsyncTask<String, Integer, FileListManage
         }
         else if("upload".equals(params[0])){
             mState |= PROC_UPWNLOAD;
-            mFileListManager.uploadFile();
+           mFileListManager.uploadFile();
             loop = waitTimes;
             int pules = mFileListManager.pules;
             while (isLoop){
@@ -83,7 +89,7 @@ public class LoadFileAsyncTask extends AsyncTask<String, Integer, FileListManage
                 }else{
                     loop = waitTimes;
                     pules =  mFileListManager.pules;
-                    mFileListManager.progressUpdate();
+                    mFileListManager.progressUpdate(false);
                     publishProgress(loop);
                 }
                 if(loop > 0) {
@@ -106,7 +112,7 @@ public class LoadFileAsyncTask extends AsyncTask<String, Integer, FileListManage
                 Log.i("LoadFileAsyncTask", dPath);
             }
             mState |= PROC_DOWNLOAD;
-            mFileListManager.downloadFile(dPath);
+           mFileListManager.downloadFile(dPath);
             loop = waitTimes;
             int pules = mFileListManager.pules;
             while (isLoop){
@@ -122,7 +128,7 @@ public class LoadFileAsyncTask extends AsyncTask<String, Integer, FileListManage
                 }else{
                     loop = waitTimes;
                     pules =  mFileListManager.pules;
-                    mFileListManager.progressUpdate();
+                    mFileListManager.progressUpdate(true);
                     publishProgress(loop);
                 }
 

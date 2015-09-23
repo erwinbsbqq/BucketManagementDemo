@@ -72,10 +72,10 @@ public class BucketManagementDemo extends Activity implements View.OnClickListen
                     activity.mFileListMag.pules++;
                 }
                 else if(ASYNC_TASK_FINISH_MSG == msg.what){
-                    activity.mAdapter.notifyDataSetChanged();
+                    activity.mAdapter.notifyDataSetInvalidated();
                 }
                 else if(ASYNC_TASK_REFLESH_MSG == msg.what){
-                    activity.mAdapter.notifyDataSetInvalidated();
+                    activity.mAdapter.notifyDataSetChanged();
                 }
             }
         }
