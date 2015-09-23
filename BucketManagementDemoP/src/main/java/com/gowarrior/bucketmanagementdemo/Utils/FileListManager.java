@@ -279,7 +279,6 @@ public class FileListManager {
     public void progressUpdate() {
         ProcNode node;
         int size = mCloudList.getUpProcList().size();
-        pules++;
         for(int i=0;i<size;i++) {
             node = mCloudList.getUpProcList().get(i);
             node.percent = cloudTool.getUpDownLoadProgress(node.id);

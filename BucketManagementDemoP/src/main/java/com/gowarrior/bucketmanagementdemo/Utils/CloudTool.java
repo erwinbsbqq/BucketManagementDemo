@@ -44,12 +44,15 @@ public class CloudTool{
         resolver.registerContentObserver(CONTENT_URI,true,contentObserver);
     }
 
+    public void cloudToolRelease(){
+        resolver.unregisterContentObserver(contentObserver);
+    }
     public boolean isReady() {
         boolean ready = false;
         ContentValues Values = new ContentValues();
         int ret = resolver.update(CONTENT_URI, Values, "ready?", null);
         if (ret == 1) {
-            Log.v(TAG, "provider db is ready!");
+            //Log.v(TAG, "provider db is ready!");
             ready = true;
         }
         return ready;
@@ -76,12 +79,14 @@ public class CloudTool{
         String name;
         String type;
         name = getFileName(absolutePath);
-        type = getExtensionName(name);
+        type = getExtensionName(absolutePath);
         long size = 0;
         try {
             size = getFileSize(new File(absolutePath));
         }catch (Exception e){
             e.printStackTrace();
+            return id;
+
         }
         ContentValues values = new ContentValues();
         values.put(this.FILENAME, name);
@@ -126,9 +131,11 @@ public class CloudTool{
                 }else if("IN_PROGRESS".equalsIgnoreCase(state)){
                     long fSize = cursor.getLong(cursor.getColumnIndex(FILESIZE));
                     long tSize = cursor.getLong(cursor.getColumnIndex(TRANSFERSIZE));
+
                     if(fSize > 0 ){
-                        ret = (int)(tSize/fSize);
+                        ret = (int)((tSize * 100)/fSize);
                     }
+                    Log.i(TAG,state+"tSize:"+tSize +" fSize:"+fSize+" percent="+ret +" ["+id);
                 }else if("COMPLETE".equalsIgnoreCase(state)){
                     ret = 100;
                 }
@@ -149,7 +156,8 @@ public class CloudTool{
     }
 
     public boolean syncWithCloud()  {
-        if (resolver.update(CONTENT_URI, null, "refresh", null) != -1) {
+        ContentValues Values = new ContentValues();
+        if (resolver.update(CONTENT_URI, Values, "refresh", null) != -1) {
            return true;
         } else {
             return false;
@@ -195,17 +203,18 @@ public class CloudTool{
     private  String getExtensionName(String filename) {
         if ((filename != null) && (filename.length() > 0)) {
             int dot = filename.lastIndexOf('.');
+
             if ((dot >-1) && (dot < (filename.length() - 1))) {
                 return filename.substring(dot + 1);
             }
         }
-        return filename;
+        return "";
     }
 
     private long getFileSize(File file) throws Exception {
         long size = 0;
         if (file.exists()) {
-            FileInputStream fis = null;
+            FileInputStream fis ;
             fis = new FileInputStream(file);
             size = fis.available();
             fis.close();
