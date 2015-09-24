@@ -31,7 +31,7 @@ import gowarrior.com.bucketexplorer.adapter.FileListHolder;
 import gowarrior.com.bucketexplorer.adapter.DirListAdapter;
 import gowarrior.com.bucketexplorer.data.LocalDirList;
 
-import com.gowarrior.cloudq.CWSBucketService.ICWSBucketAidlInterface;
+import com.gowarrior.cloudq.CWSBucket.ICWSBucketAidlInterface;
 
 import java.io.File;
 import java.util.List;
@@ -90,6 +90,7 @@ public class BrowserActivity extends Activity implements View.OnClickListener
     protected void onDestroy() {
         super.onDestroy();
         mLoadTask.setActivity(null);
+        mFileListMag.cloudTool.cloudClose();
         cloudServiceUnbind();
     }
 

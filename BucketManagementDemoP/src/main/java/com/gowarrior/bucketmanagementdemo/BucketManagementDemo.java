@@ -71,9 +71,19 @@ public class BucketManagementDemo extends Activity implements View.OnClickListen
                     activity.mFileListMag.pules++;
                 }
                 else if(ASYNC_TASK_FINISH_MSG == msg.what){
+                    if(FileListManager.TYPE_CLOUD ==activity.mFileListMag.getCurrentType()) {
+                        activity.mAdapter.setData(activity.mFileListMag.getCloudList().getFileListData());
+                    }else{
+                        activity.mAdapter.setData(activity.mFileListMag.getLocalList().getFileListData());
+                    }
                     activity.mAdapter.notifyDataSetInvalidated();
                 }
                 else if(ASYNC_TASK_REFRESH_MSG == msg.what){
+                    if(FileListManager.TYPE_CLOUD ==activity.mFileListMag.getCurrentType()) {
+                        activity.mAdapter.updateState(activity.mFileListMag.getCloudList().getFileListData());
+                    }else{
+                        activity.mAdapter.updateState(activity.mFileListMag.getLocalList().getFileListData());
+                    }
                     activity.mAdapter.notifyDataSetChanged();
                 }
             }
@@ -233,8 +243,8 @@ public class BucketManagementDemo extends Activity implements View.OnClickListen
                 }
                 break;
             case R.id.updownloadButton:
-                    Log.i(TAG,"updownloadButton;mProcState= "+mProcState);
-                    if(0==mProcState){
+                    Log.i(TAG,"upDownloadButton;mProcState= "+mProcState);
+                    if((0==mProcState)&& mAdapter.isItemSelect()){
                         LoadFileAsyncTask loadTask = new LoadFileAsyncTask(this,mFileListMag);
                         if(FileListManager.TYPE_LOCAL ==mFileListMag.getCurrentType()){
                             mProcState |= LoadFileAsyncTask.PROC_UPWNLOAD;
@@ -265,7 +275,7 @@ public class BucketManagementDemo extends Activity implements View.OnClickListen
                 break;
             case R.id.deleteButton:
                 Log.i(TAG,"deleteButton:mProcState= "+mProcState);
-                if(0==mProcState){
+                if((0==mProcState)&& mAdapter.isItemSelect()){
                     mProcState |= LoadFileAsyncTask.PROC_DELETE;
                     LoadFileAsyncTask loadTask = new LoadFileAsyncTask(this,mFileListMag);
                     if(FileListManager.TYPE_LOCAL ==mFileListMag.getCurrentType())
@@ -279,6 +289,7 @@ public class BucketManagementDemo extends Activity implements View.OnClickListen
                     String state = Environment.getExternalStorageState();
                     if (state.equals(Environment.MEDIA_MOUNTED)) {
                         mFileListMag.cloudSelectAll();
+                        mAdapter.selectedAll();
                         mAdapter.notifyDataSetChanged();
                         listSavePathSwitch(false);
                     }
@@ -296,6 +307,7 @@ public class BucketManagementDemo extends Activity implements View.OnClickListen
                 break;
             case R.id.pathCancel:
                 listSavePathSwitch(true);
+                mAdapter.cancelSelectedAll();
                 mFileListMag.cancelCloudSelect();
                 mAdapter.notifyDataSetChanged();
                 break;
@@ -306,9 +318,12 @@ public class BucketManagementDemo extends Activity implements View.OnClickListen
     public void onTaskCompleted(int proc){
         mProcState &= (~proc);
         if(null != mHandler){
+//            mHandler.sendEmptyMessage(ASYNC_TASK_FINISH_MSG);
             if(LoadFileAsyncTask.PROC_SYNC == (proc & LoadFileAsyncTask.PROC_SYNC)) {
                 mHandler.sendEmptyMessage(ASYNC_TASK_FINISH_MSG);
-            }else{
+            }else if(LoadFileAsyncTask.PROC_DELETE == (proc & LoadFileAsyncTask.PROC_DELETE)){
+                mHandler.sendEmptyMessage(ASYNC_TASK_FINISH_MSG);
+            } else{
                 mHandler.sendEmptyMessage(ASYNC_TASK_REFRESH_MSG);
             }
         }
@@ -347,6 +362,7 @@ public class BucketManagementDemo extends Activity implements View.OnClickListen
             holder.cb.toggle();
             if (-1 != position) {
                 mAdapter.setSelectedFlag(position, holder.cb.isChecked());
+                mFileListMag.setSelectedFlag(position, holder.cb.isChecked());
             }
         }
         else if(tag instanceof DirListHolder) {

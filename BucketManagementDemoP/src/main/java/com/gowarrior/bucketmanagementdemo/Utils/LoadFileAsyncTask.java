@@ -240,8 +240,4 @@ public class LoadFileAsyncTask extends AsyncTask<String, Integer, FileListManage
 
     }
 
-    public void cancelTask(){
-        isLoop = false;
-    }
-
 }

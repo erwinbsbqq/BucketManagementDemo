@@ -27,13 +27,27 @@ public class FileListAdapter extends BaseAdapter {
     private Context mContext;
     public FileListAdapter(ArrayList<FileNode> list, Context ctx){
         this.mContext = ctx;
-        this.mDataList = list;
+        mDataList = new ArrayList<FileNode>();
+        setData(list);
+        //this.mDataList = list;
         mInflater = LayoutInflater.from(ctx);
     }
     public void setData(ArrayList<FileNode> list) {
-        this.mDataList = list;
+        mDataList.clear();
+        for(int i=0;i<list.size();i++) {
+            mDataList.add(list.get(i).clone());
+        }
+//        this.mDataList = list;
     }
 
+    public void updateState(ArrayList<FileNode> list) {
+        for(int i=0;i<list.size();i++) {
+            if (i < mDataList.size()) {
+                mDataList.get(i).percent = list.get(i).percent;
+                mDataList.get(i).isSelect = list.get(i).isSelect;
+            }
+        }
+    }
     @Override
     public int getCount() {
         return mDataList.size();
@@ -97,7 +111,26 @@ public class FileListAdapter extends BaseAdapter {
     public void setSelectedFlag(int position, boolean select) {
         FileNode fNode = mDataList.get(position);
         fNode.isSelect = select;
-
     }
 
+    public void selectedAll() {
+        for(int i=0;i<mDataList.size();i++){
+            mDataList.get(i).isSelect = true;
+        }
+    }
+
+    public void cancelSelectedAll() {
+        for(int i=0;i<mDataList.size();i++){
+            mDataList.get(i).isSelect = false;
+        }
+    }
+
+    public boolean isItemSelect(){
+        for(int i=0;i<mDataList.size();i++){
+            if(mDataList.get(i).isSelect){
+                return true;
+            }
+        }
+        return false;
+    }
 }

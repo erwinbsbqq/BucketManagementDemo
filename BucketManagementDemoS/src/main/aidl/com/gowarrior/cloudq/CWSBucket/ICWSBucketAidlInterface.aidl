@@ -1,8 +1,8 @@
 // ICWSBucketAidlInterface.aidl
-package com.gowarrior.cloudq.CWSBucketService;
+package com.gowarrior.cloudq.CWSBucket;
 
 // Declare any non-default types here with import statements
-import com.gowarrior.cloudq.CWSBucketService.ICWSBucketCallback;
+import com.gowarrior.cloudq.CWSBucket.ICWSBucketCallback;
 
 interface ICWSBucketAidlInterface {
     /**
@@ -120,7 +120,7 @@ interface ICWSBucketAidlInterface {
     List<String> CWSBucketList(int handle);
 
     /**
-     * this API is used to refresh all objects(files) in bucket.
+     * this API is used to refresh all objects(files) in bucket. it's block and may take long time since need network access to cloud
      *
      * @param handle
      *            the handle of service operation of APP.

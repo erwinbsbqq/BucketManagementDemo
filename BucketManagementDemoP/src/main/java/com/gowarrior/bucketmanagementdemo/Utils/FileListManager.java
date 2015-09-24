@@ -301,4 +301,20 @@ public class FileListManager {
             }
         }
     }
+
+    public void setSelectedFlag(int position, boolean select) {
+        FileNode fNode;
+        if(TYPE_LOCAL == mCurrentType){
+            if(position >= mLocalList.getFileListData().size()){
+                return;
+            }
+            fNode = mLocalList.getFileListData().get(position);
+        }else {
+            if(position >= mCloudList.getFileListData().size()){
+                return;
+            }
+            fNode = mCloudList.getFileListData().get(position);
+        }
+        fNode.isSelect = select;
+    }
 }

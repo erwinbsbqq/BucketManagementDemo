@@ -4,8 +4,9 @@ import android.net.Uri;
 import android.os.RemoteException;
 import android.util.Log;
 
-import com.gowarrior.cloudq.CWSBucketService.ICWSBucketAidlInterface;
-import com.gowarrior.cloudq.CWSBucketService.ICWSBucketCallback;
+
+import com.gowarrior.cloudq.CWSBucket.ICWSBucketAidlInterface;
+import com.gowarrior.cloudq.CWSBucket.ICWSBucketCallback;
 
 import java.io.File;
 import java.util.List;
@@ -34,6 +35,9 @@ public class CloudTool extends ICWSBucketCallback.Stub {
         void onProgressUpdate(int handle, int id, String type, String state, int percent);
     }
     public void setCloudService(ICWSBucketAidlInterface service) {
+        if(-1 != mHandle){
+            cloudClose();
+        }
         mCloudService = service;
 //        if(null != mCloudService) {
 //            try {
@@ -60,6 +64,17 @@ public class CloudTool extends ICWSBucketCallback.Stub {
         return mHandle;
     }
 
+    public void cloudClose(){
+        if(-1!=mHandle) {
+            try {
+                if(0 == mCloudService.CWSBucketFinish(mHandle)){
+                    mHandle = -1;
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
     int getHandle(){
         return mHandle;
     }

@@ -1,12 +1,9 @@
 package gowarrior.com.bucketexplorer.Utils;
 
-import android.net.Uri;
-import android.os.RemoteException;
+
 import android.util.Log;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 

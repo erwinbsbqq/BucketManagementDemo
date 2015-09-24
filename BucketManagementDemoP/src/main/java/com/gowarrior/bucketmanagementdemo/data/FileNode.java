@@ -23,7 +23,18 @@ public class FileNode {
         isSelect = false;
         percent =0;
     }
+    public FileNode(){
 
+    }
+    public FileNode clone(){
+        FileNode newNode = new FileNode();
+        newNode.mDirPath = this.mDirPath;
+        newNode.mFileName = this.mFileName;
+        newNode.mFileType = this.mFileType;
+        newNode.percent = this.percent;
+        newNode.isSelect = this.isSelect;
+        return newNode;
+    }
     public String getDirPath()
     {
         return mDirPath;
