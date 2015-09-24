@@ -158,19 +158,24 @@ public class LoadFileAsyncTask extends AsyncTask<String, Integer, FileListManage
                 mFileListManager.loadCloudFileList();
             }
         }else if("init".equals(params[0])){
+            boolean syncOK = false;
             mState |= PROC_SYNC;
             mFileListManager.loadLocalFileList();
             while(isLoop) {
-                if (mFileListManager.cloudTool.isReady()) {
-                    mFileListManager.loadCloudFileList();
-                    break;
+                if(syncOK) {
+                    if(mFileListManager.loadCloudFileList() != -1){
+                        break;
+                    }
+                }else{
+                    syncOK = mFileListManager.cloudTool.syncWithCloud();
                 }
+
                 try {
                     Thread.sleep(300);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                Log.i("LoadFileAsyncTask","wati cloud service ready !!!");
+                Log.i("LoadFileAsyncTask","wait cloud service ready !!!");
             }
         }
         return mFileListManager;

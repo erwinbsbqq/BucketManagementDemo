@@ -22,8 +22,6 @@ public class ContentFragment extends  Fragment {
     private FileListAdapter mListAdapter;
     private AdapterView.OnItemClickListener mListItemClickListener;
     private Button mUpDownLoadButton;
-    private Button mReflashButton;
-    private Button mDeletedButton;
     private Button mSaveButton;
     private View.OnClickListener mButtonOnClickListener;
     private int upDownLoadType =1;
@@ -49,12 +47,12 @@ public class ContentFragment extends  Fragment {
         else{
             mUpDownLoadButton.setText(R.string.download);
         }
-        mReflashButton = (Button) view.findViewById(R.id.reflashButton);
-        mDeletedButton = (Button) view.findViewById(R.id.deleteButton);
+        Button mRefreshButton = (Button) view.findViewById(R.id.reflashButton);
+        Button mDeletedButton = (Button) view.findViewById(R.id.deleteButton);
         mSaveButton = (Button) view.findViewById(R.id.saveButton);
         if(null != mButtonOnClickListener){
             mUpDownLoadButton.setOnClickListener(mButtonOnClickListener);
-            mReflashButton.setOnClickListener(mButtonOnClickListener);
+            mRefreshButton.setOnClickListener(mButtonOnClickListener);
             mDeletedButton.setOnClickListener(mButtonOnClickListener);
             mSaveButton.setOnClickListener(mButtonOnClickListener);
         }

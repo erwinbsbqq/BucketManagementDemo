@@ -1,6 +1,5 @@
 package com.gowarrior.bucketmanagementdemo;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -42,7 +41,7 @@ public class BucketManagementDemo extends Activity implements View.OnClickListen
 
     private static String TAG ="BucketManagementDemo";
     private static final int ASYNC_TASK_FINISH_MSG = 2001;
-    private static final int ASYNC_TASK_REFLESH_MSG = 2002;
+    private static final int ASYNC_TASK_REFRESH_MSG = 2002;
     private ContentFragment mContentFrag;
     private Button mLocalButton;
     private Button mCloudButton;
@@ -74,7 +73,7 @@ public class BucketManagementDemo extends Activity implements View.OnClickListen
                 else if(ASYNC_TASK_FINISH_MSG == msg.what){
                     activity.mAdapter.notifyDataSetInvalidated();
                 }
-                else if(ASYNC_TASK_REFLESH_MSG == msg.what){
+                else if(ASYNC_TASK_REFRESH_MSG == msg.what){
                     activity.mAdapter.notifyDataSetChanged();
                 }
             }
@@ -100,8 +99,10 @@ public class BucketManagementDemo extends Activity implements View.OnClickListen
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mLoadTask.cancelTask();
-        mLoadTask = null;
+        if(null!=mLoadTask){
+            mLoadTask.setActivity(null);
+            mLoadTask = null;
+        }
         mFileListMag.cloudTool.cloudToolRelease();
     }
 
@@ -304,23 +305,20 @@ public class BucketManagementDemo extends Activity implements View.OnClickListen
 
     public void onTaskCompleted(int proc){
         mProcState &= (~proc);
-        Log.i(TAG,"onTaskCompleted;mProcState "+mProcState);
-//            if(null != mAdapter){
-//                mAdapter.notifyDataSetChanged();
-//            }
         if(null != mHandler){
-            mHandler.sendEmptyMessage(ASYNC_TASK_FINISH_MSG);
+            if(LoadFileAsyncTask.PROC_SYNC == (proc & LoadFileAsyncTask.PROC_SYNC)) {
+                mHandler.sendEmptyMessage(ASYNC_TASK_FINISH_MSG);
+            }else{
+                mHandler.sendEmptyMessage(ASYNC_TASK_REFRESH_MSG);
+            }
         }
+        Log.i(TAG,"onTaskCompleted;mProcState "+mProcState);
 
     }
 
     public void onTaskRefresh(){
-//        if(null != mAdapter){
-//            if(mAdapter.getCount() > 0)
-//                mAdapter.notifyDataSetChanged();
-//        }
         if(null != mHandler){
-            mHandler.sendEmptyMessage(ASYNC_TASK_REFLESH_MSG);
+            mHandler.sendEmptyMessage(ASYNC_TASK_REFRESH_MSG);
         }
     }
 

@@ -20,9 +20,6 @@ public class LoadingDialog extends DialogFragment {
                 getDialog().setTitle(title);
             }
             View v = inflater.inflate(R.layout.loading_layout, container,false);
-//        TextView tv = (TextView)v.findViewById(R.id.prompt_message);
-//        tv.setText(getPrompt());
-//
             return v;
         }
 
@@ -30,5 +27,4 @@ public class LoadingDialog extends DialogFragment {
         this.title = title;
     }
 
-    
 }

@@ -18,12 +18,9 @@ import com.gowarrior.bucketmanagementdemo.adapter.FileListAdapter;
 public class ContentFragment extends  Fragment {
     public static String TAG ="vFragmentCont";
     private LoadFileAsyncTask dataTask;
-    private ListView mListView;
     private FileListAdapter mListAdapter;
     private AdapterView.OnItemClickListener mListItemClickListener;
     private Button mUpDownLoadButton;
-    private Button mReflashButton;
-    private Button mDeletedButton;
     private Button mSaveButton;
     private View.OnClickListener mButtonOnClickListener;
     private int upDownLoadType =1;
@@ -36,7 +33,7 @@ public class ContentFragment extends  Fragment {
         }else {
             view = inflater.inflate(R.layout.content_layout, container, false);
         }
-        mListView = (ListView) view.findViewById(R.id.file_list_v);
+        ListView mListView = (ListView) view.findViewById(R.id.file_list_v);
         mListAdapter.isLandscape = isLandscape;
         mListView.setAdapter(mListAdapter);
         if(null != mListItemClickListener) {
@@ -49,12 +46,12 @@ public class ContentFragment extends  Fragment {
         else{
             mUpDownLoadButton.setText(R.string.download);
         }
-        mReflashButton = (Button) view.findViewById(R.id.reflashButton);
-        mDeletedButton = (Button) view.findViewById(R.id.deleteButton);
+        Button mRefreshButton = (Button) view.findViewById(R.id.reflashButton);
+        Button mDeletedButton = (Button) view.findViewById(R.id.deleteButton);
         mSaveButton = (Button) view.findViewById(R.id.saveButton);
         if(null != mButtonOnClickListener){
             mUpDownLoadButton.setOnClickListener(mButtonOnClickListener);
-            mReflashButton.setOnClickListener(mButtonOnClickListener);
+            mRefreshButton.setOnClickListener(mButtonOnClickListener);
             mDeletedButton.setOnClickListener(mButtonOnClickListener);
             mSaveButton.setOnClickListener(mButtonOnClickListener);
         }

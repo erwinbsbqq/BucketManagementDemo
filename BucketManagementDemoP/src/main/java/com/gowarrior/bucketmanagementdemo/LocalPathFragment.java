@@ -18,8 +18,6 @@ import com.gowarrior.bucketmanagementdemo.adapter.DirListAdapter;
 public class LocalPathFragment extends Fragment{
     public boolean isShow;
     private ListView mListView;
-    private Button mOkButton;
-    private Button mCancelButton;
     private TextView pathText;
     private DirListAdapter mListAdapter;
     private AdapterView.OnItemClickListener mListItemClickListener;
@@ -35,8 +33,8 @@ public class LocalPathFragment extends Fragment{
         mListView = (ListView) view.findViewById(R.id.dirList);
         mListView.setAdapter(mListAdapter);
         mListView.setOnItemClickListener(mListItemClickListener);
-        mOkButton = (Button) view.findViewById(R.id.pathOK);
-        mCancelButton = (Button) view.findViewById(R.id.pathCancel);
+        Button mOkButton = (Button) view.findViewById(R.id.pathOK);
+        Button mCancelButton = (Button) view.findViewById(R.id.pathCancel);
         if(null != mButtonOnClickListener){
             mOkButton.setOnClickListener(mButtonOnClickListener);
             mCancelButton.setOnClickListener(mButtonOnClickListener);

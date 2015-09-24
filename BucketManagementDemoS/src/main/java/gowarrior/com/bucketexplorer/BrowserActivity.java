@@ -89,7 +89,7 @@ public class BrowserActivity extends Activity implements View.OnClickListener
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mLoadTask.cancelTask();
+        mLoadTask.setActivity(null);
         cloudServiceUnbind();
     }
 
