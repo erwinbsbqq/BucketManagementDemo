@@ -7,5 +7,4 @@ public class ProcNode {
     public int id;
     public int percent;
     public int idx;
-    public String object;
 }

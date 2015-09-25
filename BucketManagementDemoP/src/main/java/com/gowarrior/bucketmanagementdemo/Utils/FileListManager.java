@@ -27,7 +27,7 @@ public class FileListManager {
     private CloudFileList mCloudList;
     private int mCurrentType = TYPE_LOCAL;
     public int pules;
-
+    private ArrayList<FileNode> mDataList;
 
     public FileListManager(Context context,Handler handler,String path){
         if(null != path){
@@ -41,6 +41,7 @@ public class FileListManager {
         mLocalList = new LocalFileList();
         mCloudList = new CloudFileList();
         cloudTool = new CloudTool(context,handler);
+        mDataList = new ArrayList<FileNode>();
     }
 
     public void loadLocalFileList(){
@@ -115,7 +116,7 @@ public class FileListManager {
         }
         List<String> list = cloudTool.getFileList();
         if(null == list){
-            Log.e(TAG,"cloud server error !");
+            Log.e(TAG, "cloud server error !");
             return -1;
         }
         mCloudList.clearFileNodes();
@@ -144,14 +145,6 @@ public class FileListManager {
         return ret;
     }
 
-    public void cancelCloudSelect(){
-        ArrayList<FileNode> fileList = mCloudList.getFileListData();
-        for (int i = 0; i < fileList.size(); i++) {
-            if(fileList.get(i).isSelect) {
-                fileList.get(i).isSelect = false;
-            }
-        }
-    }
 
     public int downloadFile(String pathDownload){
         int ret =0;
@@ -173,7 +166,6 @@ public class FileListManager {
                 if(id > -1){
                     ProcNode node = new ProcNode();
                     node.id= id;
-                    node.object = object;
                     node.percent =0;
                     node.idx = i;
                     fNode.percent =0;
@@ -193,6 +185,25 @@ public class FileListManager {
         ArrayList<FileNode> fileList = mCloudList.getFileListData();
         for (int i = 0; i < fileList.size(); i++) {
             fileList.get(i).isSelect = true;
+        }
+        if(TYPE_CLOUD == mCurrentType){
+            for(int j=0;j<mDataList.size();j++){
+                mDataList.get(j).isSelect = true;
+            }
+        }
+    }
+
+    public void cancelCloudSelect(){
+        ArrayList<FileNode> fileList = mCloudList.getFileListData();
+        for (int i = 0; i < fileList.size(); i++) {
+            if(fileList.get(i).isSelect) {
+                fileList.get(i).isSelect = false;
+            }
+        }
+        if(TYPE_CLOUD == mCurrentType) {
+            for (int j = 0; j < mDataList.size(); j++) {
+                mDataList.get(j).isSelect = false;
+            }
         }
     }
 
@@ -226,7 +237,6 @@ public class FileListManager {
                     ProcNode node = new ProcNode();
                     node.id= id;
                     node.idx = i;
-                    node.object = fileList.get(i).mFileName;
                     node.percent =0;
                     fNode.percent = 0;
                     mCloudList.getUpProcList().add(node);
@@ -255,20 +265,12 @@ public class FileListManager {
         return ret;
     }
 
-    public LocalFileList getLocalList(){
-        return mLocalList;
-    }
-
-    public CloudFileList getCloudList(){
-        return mCloudList;
-    }
-
     public int getCurrentType(){
             return mCurrentType;
     }
 
     public void setCurrentType(int type){
-         mCurrentType = type;
+        mCurrentType = type;
     }
 
     private int getFileType(String name){
@@ -316,5 +318,46 @@ public class FileListManager {
             fNode = mCloudList.getFileListData().get(position);
         }
         fNode.isSelect = select;
+        mDataList.get(position).isSelect = select;
+    }
+
+    public ArrayList<FileNode> getAdapterData() {
+        return mDataList;
+    }
+
+    public void updateAdapterData(){
+        ArrayList<FileNode> list;
+        if(TYPE_LOCAL == mCurrentType){
+            list = mLocalList.getFileListData();
+        }else{
+            list = mCloudList.getFileListData();
+        }
+        mDataList.clear();
+        for(int i=0;i<list.size();i++) {
+            mDataList.add(list.get(i).cloneWithoutDir());
+        }
+    }
+    public void updateAdapterDataState() {
+        ArrayList<FileNode> list;
+        if(TYPE_LOCAL == mCurrentType){
+            list = mLocalList.getFileListData();
+        }else{
+            list = mCloudList.getFileListData();
+        }
+        for(int i=0;i<list.size();i++) {
+            if (i < mDataList.size()) {
+                mDataList.get(i).percent = list.get(i).percent;
+                mDataList.get(i).isSelect = list.get(i).isSelect;
+            }
+        }
+    }
+
+    public boolean isItemSelect(){
+        for(int i=0;i<mDataList.size();i++){
+            if(mDataList.get(i).isSelect){
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -21,7 +21,7 @@ import java.util.LinkedList;
  */
 public class CloudTool{
     private final static String TAG = "CloudTool";
-    public static final String AUTHORITY = "com.gowarrior.cloudq.CWSBucketService.CWSBucketProvider";
+    public static final String AUTHORITY = "com.gowarrior.cloudq.CWSBucket.CWSBucketProvider";
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/files");
 
     public static final String FILENAME = "fname";

@@ -68,22 +68,14 @@ public class BucketManagementDemo extends Activity implements View.OnClickListen
             final BucketManagementDemo activity = mActivityReference.get();
             if (activity != null) {
                 if(CloudContentObserver.UPDATE_TICK_MSG == msg.what){
-                    activity.mFileListMag.pules++;
+                    activity.mFileListMag.pules++; //drive async task update progress
                 }
                 else if(ASYNC_TASK_FINISH_MSG == msg.what){
-                    if(FileListManager.TYPE_CLOUD ==activity.mFileListMag.getCurrentType()) {
-                        activity.mAdapter.setData(activity.mFileListMag.getCloudList().getFileListData());
-                    }else{
-                        activity.mAdapter.setData(activity.mFileListMag.getLocalList().getFileListData());
-                    }
+                    activity.mFileListMag.updateAdapterData();
                     activity.mAdapter.notifyDataSetInvalidated();
                 }
                 else if(ASYNC_TASK_REFRESH_MSG == msg.what){
-                    if(FileListManager.TYPE_CLOUD ==activity.mFileListMag.getCurrentType()) {
-                        activity.mAdapter.updateState(activity.mFileListMag.getCloudList().getFileListData());
-                    }else{
-                        activity.mAdapter.updateState(activity.mFileListMag.getLocalList().getFileListData());
-                    }
+                    activity.mFileListMag.updateAdapterDataState();
                     activity.mAdapter.notifyDataSetChanged();
                 }
             }
@@ -111,7 +103,7 @@ public class BucketManagementDemo extends Activity implements View.OnClickListen
         super.onDestroy();
         if(null!=mLoadTask){
             mLoadTask.setActivity(null);
-            mLoadTask = null;
+//            mLoadTask = null;
         }
         mFileListMag.cloudTool.cloudToolRelease();
     }
@@ -164,18 +156,15 @@ public class BucketManagementDemo extends Activity implements View.OnClickListen
         //mContentFrag.isLandscape = false;
         Log.i(TAG, "screen width: " + metric.widthPixels);
         if(FileListManager.TYPE_LOCAL ==mFileListMag.getCurrentType()) {
-            mAdapter = new FileListAdapter(mFileListMag.getLocalList().getFileListData()
-                    , this);
             //mContentFrag.setDownloadButtonResource(R.drawable.up_arrow_32x32);
             localCloudSelect(true);
 
         }else{
-            mAdapter = new FileListAdapter(mFileListMag.getCloudList().getFileListData()
-                    , this);
             //mContentFrag.setDownloadButtonResource(R.drawable.down_arrow_32x32);
             localCloudSelect(false);
         }
-
+        mFileListMag.updateAdapterData();
+        mAdapter = new FileListAdapter(mFileListMag.getAdapterData(),this);
         mContentFrag.setListAdapter(mAdapter);
         mContentFrag.setMyListItemClickListener(this);
         mContentFrag.setButtonOnClickListener(this);
@@ -226,7 +215,7 @@ public class BucketManagementDemo extends Activity implements View.OnClickListen
 //                    mContentFrag.setDownloadButtonResource(R.drawable.up_arrow_32x32);
                     localCloudSelect(true);
                     mFileListMag.setCurrentType(FileListManager.TYPE_LOCAL);
-                    mAdapter.setData(mFileListMag.getLocalList().getFileListData());
+                    mFileListMag.updateAdapterData();
                     mAdapter.notifyDataSetChanged();
                 }
                 break;
@@ -235,16 +224,13 @@ public class BucketManagementDemo extends Activity implements View.OnClickListen
 //                    mContentFrag.setDownloadButtonResource(R.drawable.down_arrow_32x32);
                     localCloudSelect(false);
                     mFileListMag.setCurrentType(FileListManager.TYPE_CLOUD);
-                    if (null == mFileListMag.getCloudList().getFileListData()) {
-                        Log.e(TAG, "getCloudList error !");
-                    }
-                    mAdapter.setData(mFileListMag.getCloudList().getFileListData());
+                    mFileListMag.updateAdapterData();
                     mAdapter.notifyDataSetChanged();
                 }
                 break;
             case R.id.updownloadButton:
                     Log.i(TAG,"upDownloadButton;mProcState= "+mProcState);
-                    if((0==mProcState)&& mAdapter.isItemSelect()){
+                    if((0==mProcState)&& mFileListMag.isItemSelect()){
                         LoadFileAsyncTask loadTask = new LoadFileAsyncTask(this,mFileListMag);
                         if(FileListManager.TYPE_LOCAL ==mFileListMag.getCurrentType()){
                             mProcState |= LoadFileAsyncTask.PROC_UPWNLOAD;
@@ -259,7 +245,7 @@ public class BucketManagementDemo extends Activity implements View.OnClickListen
                     }
                 break;
             case R.id.reflashButton:
-                Log.i(TAG,"reflashButton;mProcState= "+mProcState);
+                Log.i(TAG,"refreshButton;mProcState= "+mProcState);
                 if(0==mProcState){
                     mProcState |= LoadFileAsyncTask.PROC_SYNC;
                     LoadFileAsyncTask loadTask = new LoadFileAsyncTask(this,mFileListMag);
@@ -275,7 +261,7 @@ public class BucketManagementDemo extends Activity implements View.OnClickListen
                 break;
             case R.id.deleteButton:
                 Log.i(TAG,"deleteButton:mProcState= "+mProcState);
-                if((0==mProcState)&& mAdapter.isItemSelect()){
+                if((0==mProcState)&& mFileListMag.isItemSelect()){
                     mProcState |= LoadFileAsyncTask.PROC_DELETE;
                     LoadFileAsyncTask loadTask = new LoadFileAsyncTask(this,mFileListMag);
                     if(FileListManager.TYPE_LOCAL ==mFileListMag.getCurrentType())
@@ -285,16 +271,16 @@ public class BucketManagementDemo extends Activity implements View.OnClickListen
                 break;
 
             case R.id.saveButton:
-                if(mFileListMag.getCloudList().getFileCount() > 0 ) {
-                    String state = Environment.getExternalStorageState();
-                    if (state.equals(Environment.MEDIA_MOUNTED)) {
-                        mFileListMag.cloudSelectAll();
-                        mAdapter.selectedAll();
+                String state = Environment.getExternalStorageState();
+                if (state.equals(Environment.MEDIA_MOUNTED)) {
+                    mFileListMag.cloudSelectAll();
+                    if(mFileListMag.isItemSelect()) {
                         mAdapter.notifyDataSetChanged();
                         listSavePathSwitch(false);
                     }
                 }
                 break;
+
             case R.id.pathOK:
                 listSavePathSwitch(true);
                 //mFileListMag.testUsbWrite(mLocalDirList.getPath());
@@ -307,7 +293,6 @@ public class BucketManagementDemo extends Activity implements View.OnClickListen
                 break;
             case R.id.pathCancel:
                 listSavePathSwitch(true);
-                mAdapter.cancelSelectedAll();
                 mFileListMag.cancelCloudSelect();
                 mAdapter.notifyDataSetChanged();
                 break;
@@ -361,7 +346,6 @@ public class BucketManagementDemo extends Activity implements View.OnClickListen
             FileListHolder holder = (FileListHolder) tag;
             holder.cb.toggle();
             if (-1 != position) {
-                mAdapter.setSelectedFlag(position, holder.cb.isChecked());
                 mFileListMag.setSelectedFlag(position, holder.cb.isChecked());
             }
         }

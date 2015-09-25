@@ -26,9 +26,10 @@ public class FileNode {
     public FileNode(){
 
     }
-    public FileNode clone(){
+
+    public FileNode cloneWithoutDir(){
         FileNode newNode = new FileNode();
-        newNode.mDirPath = this.mDirPath;
+        newNode.mDirPath = null;//this.mDirPath;
         newNode.mFileName = this.mFileName;
         newNode.mFileType = this.mFileType;
         newNode.percent = this.percent;
