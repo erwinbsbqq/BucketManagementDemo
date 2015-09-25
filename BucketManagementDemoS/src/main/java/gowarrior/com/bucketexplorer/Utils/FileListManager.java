@@ -174,7 +174,6 @@ public class FileListManager implements CloudTool.CloudToolListener {
                     ProcNode node = new ProcNode();
                     node.handle = cloudTool.getHandle();
                     node.id= id;
-                    node.object = object;
                     node.percent =0;
                     node.idx = i;
                     fNode.percent =0;
@@ -228,7 +227,6 @@ public class FileListManager implements CloudTool.CloudToolListener {
                     node.handle = cloudTool.getHandle();
                     node.id= id;
                     node.idx = i;
-                    node.object = fileList.get(i).mFileName;
                     node.percent =0;
                     fNode.percent = 0;
                     mCloudList.getUpProcList().add(node);
@@ -257,32 +255,45 @@ public class FileListManager implements CloudTool.CloudToolListener {
         return ret;
     }
 
-    public void updateProcSate(int handle,int id,int percent){
+    public void updateProcSate(boolean isDownload,int handle,int id,int percent){
         ProcNode node;
-        int size = mCloudList.getUpProcList().size();
+        int size;
         pules++;
-        for(int i=0;i<size;i++) {
-            node =  mCloudList.getUpProcList().get(i);
-            if((id == node.id)&&(handle == node.handle)){
-                node.percent = percent;
-                if(-1 != percent) {
-                    ArrayList<FileNode> fileList = mLocalList.getFileListData();
-                    fileList.get(node.idx).percent = percent;
-                }
-                return;
-            }
+        if(isDownload){
+            size = mCloudList.getDownProcList().size();
+            for(int i=0;i<size;i++) {
+                node =  mCloudList.getDownProcList().get(i);
+                if((id == node.id)&&(handle == node.handle)){
+                    node.percent = percent;
+                    if(-1 != percent) {
+                        ArrayList<FileNode> fileList = mCloudList.getFileListData();
+                        if(node.idx < fileList.size())
+                            fileList.get(node.idx).percent = percent;
+                        else{
+                            Log.e(TAG,"[down]updateProcSate error !!! idx="+node.idx+" size="+fileList.size());
+                        }
 
-        }
-        size = mCloudList.getDownProcList().size();
-        for(int i=0;i<size;i++) {
-            node =  mCloudList.getDownProcList().get(i);
-            if((id == node.id)&&(handle == node.handle)){
-                node.percent = percent;
-                if(-1 != percent) {
-                    ArrayList<FileNode> fileList = mCloudList.getFileListData();
-                    fileList.get(node.idx).percent = percent;
+                    }
+                    return;
                 }
-                return;
+            }
+        }else {
+            size = mCloudList.getUpProcList().size();
+
+            for (int i = 0; i < size; i++) {
+                node = mCloudList.getUpProcList().get(i);
+                if ((id == node.id) && (handle == node.handle)) {
+                    node.percent = percent;
+                    if (-1 != percent) {
+                        ArrayList<FileNode> fileList = mLocalList.getFileListData();
+                        if(node.idx < fileList.size())
+                            fileList.get(node.idx).percent = percent;
+                        else{
+                            Log.e(TAG,"[up]updateProcSate error !!! idx="+node.idx+" size="+fileList.size());
+                        }
+                    }
+                    return;
+                }
             }
         }
 
@@ -310,16 +321,18 @@ public class FileListManager implements CloudTool.CloudToolListener {
 
     @Override
     public void onProgressUpdate(int handle, int id, String type, String state, int percent) {
-        Log.v(TAG, "onProgressUpdate: " + "handle=" + handle + " id=" + id +" type="+type
-                + " state=" + state + " percent=" +  percent);
+        Log.v(TAG, "onProgressUpdate: " + "handle=" + handle + " id=" + id + " type=" + type
+                + " state=" + state + " percent=" + percent);
+
+        boolean isDownload = "download".equalsIgnoreCase(type);
         if("ERROR".equalsIgnoreCase(state)) {
             percent = -1;
-            updateProcSate(handle,id,percent);
+            updateProcSate(isDownload,handle,id,percent);
         }else if("IN_PROGRESS".equalsIgnoreCase(state)){
-                updateProcSate(handle,id,percent);
+                updateProcSate(isDownload,handle,id,percent);
         }else if("COMPLETE".equalsIgnoreCase(state)){
             percent = 100;
-            updateProcSate(handle,id,percent);
+            updateProcSate(isDownload,handle,id,percent);
         }
 
     }

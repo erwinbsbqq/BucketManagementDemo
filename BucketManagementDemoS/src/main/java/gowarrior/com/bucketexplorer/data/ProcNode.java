@@ -9,6 +9,4 @@ public class ProcNode {
     public int percent;
     public int state; //0 success,1 progress,-1 error
     public int idx;
-    public String object;
-
 }
